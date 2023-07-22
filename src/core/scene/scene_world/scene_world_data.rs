@@ -1,3 +1,4 @@
+use rand::Rng;
 use crate::core::elements::tilemap::TileMap;
 use crate::core::physics::collide_body::CollideBody;
 use crate::core::scene::scene_world::player::Player;
@@ -26,10 +27,22 @@ impl SceneWorldData {
             tilemap: TileMap::new(30, 30, 32),
             pos_curseur: pos_player + Vecteur2D::new(32.0, 0.0),
             vaisseau_a_trouver: CollideBody::basic(
-                Vecteur2D::new(32.0 * 2.0, 32.0 * 2.0),
+                Self::random_vaisseau(),
                 16.0
             ),
             compteur_de_monde_genere
         }
+    }
+
+    fn random_vaisseau() -> Vecteur2D<f32> {
+        let min = 1;
+        let max = 30;
+
+        let mut rng = rand::thread_rng();
+
+        let x = rng.gen_range(min..max);
+        let y = rng.gen_range(min..max);
+
+        Vecteur2D::new((x * 32) as f32 , (y * 32) as f32)
     }
 }
