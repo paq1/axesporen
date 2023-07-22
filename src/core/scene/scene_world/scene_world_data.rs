@@ -2,7 +2,7 @@ use crate::core::elements::tilemap::TileMap;
 use crate::core::scene::scene_world::player::Player;
 use crate::core::sdd::vecteur2d::Vecteur2D;
 
-pub struct SceneExempleData {
+pub struct SceneWorldData {
     pub is_init: bool,
     pub player: Player,
     pub camera: Vecteur2D<f32>,
@@ -10,7 +10,7 @@ pub struct SceneExempleData {
     pub pos_curseur: Vecteur2D<f32>
 }
 
-impl SceneExempleData {
+impl SceneWorldData {
     pub fn new() -> Self {
         let player = Player::new();
         let pos_player = player.pos.clone();

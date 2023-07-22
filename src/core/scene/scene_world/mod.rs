@@ -1,4 +1,4 @@
-pub mod scene_exemple_data;
+pub mod scene_world_data;
 pub mod player;
 
 use std::cell::RefCell;
@@ -11,7 +11,7 @@ use crate::core::input::CanManageInput;
 use crate::core::musics::CanPlayMusic;
 use crate::core::physics::collide_body::CanCollideWithTileMap;
 use crate::core::scene::{SceneEnum};
-use crate::core::scene::scene_world::scene_exemple_data::SceneExempleData;
+use crate::core::scene::scene_world::scene_world_data::SceneWorldData;
 use crate::core::sdd::vecteur2d::Vecteur2D;
 
 pub struct SceneWorld<SpriteService, TextService, InputService, MusicService>
@@ -25,7 +25,7 @@ pub struct SceneWorld<SpriteService, TextService, InputService, MusicService>
     pub text_service: Rc<RefCell<TextService>>,
     pub sprite_service: Rc<RefCell<SpriteService>>,
     pub music_service: Rc<RefCell<MusicService>>,
-    pub data: SceneExempleData
+    pub data: SceneWorldData
 }
 
 impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteService, TextService, InputService, MusicService>
@@ -106,7 +106,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             text_service,
             sprite_service,
             music_service,
-            data: SceneExempleData::new()
+            data: SceneWorldData::new()
         }
     }
 
