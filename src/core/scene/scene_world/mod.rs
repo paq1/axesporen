@@ -241,12 +241,12 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
 
     fn draw_vaisseau_a_trouver(&mut self) -> Result<(), String> {
         self.sprite_service.borrow_mut().draw_sprite(
-            "smiley",
+            "porte",
             Vecteur2D::new(
                 (self.data.vaisseau_a_trouver.position.x - self.data.camera.x - 16f32) as i32,
                 (self.data.vaisseau_a_trouver.position.y - self.data.camera.y - 16f32) as i32
             )
-            ,None, None
+            ,Some(Vecteur2D::new(64, 64)), Some(Vecteur2D::new(32, 32))
         )
     }
 
