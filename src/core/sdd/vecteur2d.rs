@@ -1,6 +1,6 @@
 use std::ops;
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Vecteur2D<S> {
     pub x: S,
     pub y: S

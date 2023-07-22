@@ -4,6 +4,7 @@ pub mod player;
 use std::cell::RefCell;
 use std::rc::Rc;
 use crate::core::elements::tilemap::tile::TileType;
+use crate::core::elements::tilemap::TileMap;
 use crate::core::graphics::models::color::Color;
 
 use crate::core::graphics::{CanDrawSprite, CanDrawText};
@@ -47,7 +48,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         self.update_camera();
         self.test_play_sound();
 
-        self.draw_tilemap().expect("erreur lors de l'affichage de la map");
+        self.draw_near_tilemaps().expect("erreur lors de l'affichage de la map");
         self.draw_vaisseau_a_trouver().expect("erreur lors de l'affichage du vaisseau");
         self.draw_player().expect("erreur lors de l'affichage du player");
         self.draw_cursor().expect("erreur lors de l'affichage du curseur");
@@ -130,10 +131,14 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
     fn init_scene(&mut self) -> Result<(), String> {
         if !self.data.is_init {
             self.data.is_init = true;
-            self.music_service.borrow().play("hold-the-line", 10)
+            self.music_service.borrow().play("hold-the-line", 20)
         } else {
             Ok(())
         }
+    }
+
+    fn get_current_tilemap(&self) -> &TileMap {
+        self.data.tilemap.get_tilemap_from_position(&self.data.player.pos).unwrap()
     }
 
     fn update_player(&mut self, dt: f32) -> Result<(), String> {
@@ -145,7 +150,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             let mut col_body = self.data.player.collide_body.clone();
             col_body.position.y -= vitesse_temps;
 
-            if !col_body.is_collide(&self.data.tilemap, vec![TileType::Mur]) {
+            if !col_body.is_collide(self.get_current_tilemap(), vec![TileType::Mur]) {
                 self.data.player.pos.y -= vitesse_temps;
                 self.data.player.collide_body.position.y -= vitesse_temps;
             }
@@ -155,7 +160,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             let mut col_body = self.data.player.collide_body.clone();
             col_body.position.x += vitesse_temps;
 
-            if !col_body.is_collide(&self.data.tilemap, vec![TileType::Mur]) {
+            if !col_body.is_collide(self.get_current_tilemap(), vec![TileType::Mur]) {
                 self.data.player.pos.x += vitesse_temps;
                 self.data.player.collide_body.position.x += vitesse_temps;
             }
@@ -165,7 +170,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             let mut col_body = self.data.player.collide_body.clone();
             col_body.position.y += vitesse_temps;
 
-            if !col_body.is_collide(&self.data.tilemap, vec![TileType::Mur]) {
+            if !col_body.is_collide(self.get_current_tilemap(), vec![TileType::Mur]) {
                 self.data.player.pos.y += vitesse_temps;
                 self.data.player.collide_body.position.y += vitesse_temps;
             }
@@ -175,7 +180,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             let mut col_body = self.data.player.collide_body.clone();
             col_body.position.x -= vitesse_temps;
 
-            if !col_body.is_collide(&self.data.tilemap, vec![TileType::Mur]) {
+            if !col_body.is_collide(self.get_current_tilemap(), vec![TileType::Mur]) {
                 self.data.player.pos.x -= vitesse_temps;
                 self.data.player.collide_body.position.x -= vitesse_temps;
             }
@@ -261,14 +266,55 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         )
     }
 
-    fn draw_tilemap(&mut self) -> Result<(), String> {
-        self.data
-            .tilemap
+
+    fn draw_near_tilemaps(&self) -> Result<(), String> {
+
+        let pos_tilemap = self.data.tilemap.get_tilemap_index_from_position(&self.data.player.pos);
+
+        let max_x = self.data.tilemap.nb_tilemap_column as i32 - 1;
+        let max_y = self.data.tilemap.nb_tilemap_line as i32 - 1;
+
+        let x = pos_tilemap.x as i32;
+        let y = pos_tilemap.y as i32;
+
+        let pos = [
+            Vecteur2D::new(x, y), // centre
+            Vecteur2D::new(x, y - 1), // haut
+            Vecteur2D::new(x + 1, y - 1), // haut - droit
+            Vecteur2D::new(x + 1, y), // droit
+            Vecteur2D::new(x + 1, y + 1), // bas - droit
+            Vecteur2D::new(x, y + 1), // bas
+            Vecteur2D::new(x - 1, y + 1), // bas - gauche
+            Vecteur2D::new(x - 1, y), // gauche
+            Vecteur2D::new(x - 1, y - 1), // haut - gauche
+        ];
+
+        pos
+            .iter()
+            .filter(|pos| {
+                pos.x >= 0 && pos.y >= 0 && pos.x <= max_x && pos.y <= max_y
+            })
+            .map(|index| {
+                self.data.tilemap
+                    .get_tilemap_from_index(
+                        &Vecteur2D::new(index.x as u32, index.y as u32)
+                    )
+            })
+            .for_each(|tilemap| {
+                self.draw_one_tilemap(tilemap)
+                    .expect("erreur lors de l'affichage de la tilemap");
+            });
+
+        Ok(())
+    }
+
+    fn draw_one_tilemap(&self, tilemap: &TileMap) -> Result<(), String> {
+        tilemap
             .tiles
-            .iter_mut()
+            .iter()
             .for_each(|line| {
                 line
-                    .iter_mut()
+                    .iter()
                     .filter(|current| {
                         SceneWorld::<
                             SpriteService,
