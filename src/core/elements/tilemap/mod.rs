@@ -57,7 +57,7 @@ impl TileMapHudge {
         let index_tile_y = (position.y / self.tile_size as f32).floor() as u32;
 
         let index_tilemap_x = index_tile_x / self.width_one_tilemap;
-        let index_tilemap_y = index_tile_y / self.width_one_tilemap;
+        let index_tilemap_y = index_tile_y / self.height_one_tilemap;
 
         Vecteur2D::new(index_tilemap_x, index_tilemap_y)
     }
@@ -112,6 +112,9 @@ impl TileMapHudge {
             index_x as u32 - (index_tm.x * self.width_one_tilemap),
             index_y as u32 - (index_tm.y * self.height_one_tilemap),
         );
+
+        // println!("real index = {:?}", real_index);
+        // println!("tm index from pos = {:?}", index_tm);
 
         let tilemap_opt = self.get_tilemap_from_position(position);
 
