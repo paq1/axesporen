@@ -14,10 +14,10 @@ impl<'a> SpriteFactory<'a> {
         let spite_smiley_path: &Path = Path::new("assets/sprites/smiley_sdl_seed.bmp");
         let spite_smiley: Texture<'a> = tc.load_texture(spite_smiley_path)?;
 
-        let tile_herbe_path: &Path = Path::new("assets/sprites/tiles/tile-herbe-claire.png");
+        let tile_herbe_path: &Path = Path::new("assets/sprites/tiles/tileGrass.png");
         let tile_herbe: Texture<'a> = tc.load_texture(tile_herbe_path)?;
 
-        let tile_brique_path: &Path = Path::new("assets/sprites/tiles/brique.png");
+        let tile_brique_path: &Path = Path::new("assets/sprites/tiles/tileStone.png");
         let tile_brique: Texture<'a> = tc.load_texture(tile_brique_path)?;
 
         let viseur_path: &Path = Path::new("assets/sprites/curseur/curseur.png");

@@ -294,7 +294,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
                                 current.pos.x as i32 * 32 - self.data.camera.x as i32,
                                 current.pos.y as i32 * 32 - self.data.camera.y as i32
                             )
-                            , None, None
+                            , Some(Vecteur2D::new(64, 74)), Some(Vecteur2D::new(32, 51))
                         ).expect("erreur de lors de la 'affiche de la tuile");
                     });
             });
