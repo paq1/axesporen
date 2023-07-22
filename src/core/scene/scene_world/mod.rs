@@ -10,7 +10,7 @@ use crate::core::graphics::models::color::Color;
 use crate::core::graphics::{CanDrawSprite, CanDrawText};
 use crate::core::input::CanManageInput;
 use crate::core::musics::CanPlayMusic;
-use crate::core::physics::collide_body::CanCollideWithTileMap;
+use crate::core::physics::collide_body::{CanCollideWithTileMapHudge};
 use crate::core::scene::{SceneEnum};
 use crate::core::scene::scene_world::scene_world_data::SceneWorldData;
 use crate::core::sdd::vecteur2d::Vecteur2D;
@@ -137,10 +137,6 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         }
     }
 
-    fn get_current_tilemap(&self) -> &TileMap {
-        self.data.tilemap.get_tilemap_from_position(&self.data.player.pos).unwrap()
-    }
-
     fn update_player(&mut self, dt: f32) -> Result<(), String> {
         let vitesse = self.data.player.vitesse;
         let vitesse_temps = vitesse * dt;
@@ -150,7 +146,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             let mut col_body = self.data.player.collide_body.clone();
             col_body.position.y -= vitesse_temps;
 
-            if !col_body.is_collide(self.get_current_tilemap(), vec![TileType::Mur]) {
+            if !col_body.is_collide_with_tilemap_hudge(&self.data.tilemap, vec![TileType::Mur]) {
                 self.data.player.pos.y -= vitesse_temps;
                 self.data.player.collide_body.position.y -= vitesse_temps;
             }
@@ -160,7 +156,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             let mut col_body = self.data.player.collide_body.clone();
             col_body.position.x += vitesse_temps;
 
-            if !col_body.is_collide(self.get_current_tilemap(), vec![TileType::Mur]) {
+            if !col_body.is_collide_with_tilemap_hudge(&self.data.tilemap, vec![TileType::Mur]) {
                 self.data.player.pos.x += vitesse_temps;
                 self.data.player.collide_body.position.x += vitesse_temps;
             }
@@ -170,7 +166,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             let mut col_body = self.data.player.collide_body.clone();
             col_body.position.y += vitesse_temps;
 
-            if !col_body.is_collide(self.get_current_tilemap(), vec![TileType::Mur]) {
+            if !col_body.is_collide_with_tilemap_hudge(&self.data.tilemap, vec![TileType::Mur]) {
                 self.data.player.pos.y += vitesse_temps;
                 self.data.player.collide_body.position.y += vitesse_temps;
             }
@@ -180,7 +176,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             let mut col_body = self.data.player.collide_body.clone();
             col_body.position.x -= vitesse_temps;
 
-            if !col_body.is_collide(self.get_current_tilemap(), vec![TileType::Mur]) {
+            if !col_body.is_collide_with_tilemap_hudge(&self.data.tilemap, vec![TileType::Mur]) {
                 self.data.player.pos.x -= vitesse_temps;
                 self.data.player.collide_body.position.x -= vitesse_temps;
             }
@@ -278,15 +274,17 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         let y = pos_tilemap.y as i32;
 
         let pos = [
-            Vecteur2D::new(x, y), // centre
+            Vecteur2D::new(x - 1, y - 1), // haut - gauche
             Vecteur2D::new(x, y - 1), // haut
             Vecteur2D::new(x + 1, y - 1), // haut - droit
-            Vecteur2D::new(x + 1, y), // droit
-            Vecteur2D::new(x + 1, y + 1), // bas - droit
-            Vecteur2D::new(x, y + 1), // bas
-            Vecteur2D::new(x - 1, y + 1), // bas - gauche
+
             Vecteur2D::new(x - 1, y), // gauche
-            Vecteur2D::new(x - 1, y - 1), // haut - gauche
+            Vecteur2D::new(x, y), // centre
+            Vecteur2D::new(x + 1, y), // droit
+
+            Vecteur2D::new(x - 1, y + 1), // bas - gauche
+            Vecteur2D::new(x, y + 1), // bas
+            Vecteur2D::new(x + 1, y + 1), // bas - droit
         ];
 
         pos

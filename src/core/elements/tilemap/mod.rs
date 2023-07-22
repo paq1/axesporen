@@ -13,10 +13,10 @@ pub struct TileMapHudge {
 }
 
 impl TileMapHudge {
-    pub fn new(w: u32, h: u32, tile_size: u32) -> Self {
+    pub fn new(w: u32, h: u32, tile_size: u32, width_one: u32, height_one: u32) -> Self {
 
-        let width_tilemap = 30;
-        let height_tilemap = 30;
+        let width_tilemap = width_one;
+        let height_tilemap = height_one;
 
         let tilemaps = (0u32 .. h)
             .into_iter()
@@ -101,6 +101,27 @@ impl TileMapHudge {
     pub fn indexes_tilemap_valid(&self, x: i32, y: i32) -> bool {
         x >= 0 && y >= 0 && x < self.nb_tilemap_column as i32 && y < self.nb_tilemap_line as i32
     }
+
+    pub fn get_tile_from_position(&self, position: &Vecteur2D<f32>) -> Option<&Tile> {
+        let index_x = (position.x / self.tile_size as f32).floor() as i32;
+        let index_y = (position.y / self.tile_size as f32).floor() as i32;
+
+        let index_tm = self.get_tilemap_index_from_position(position);
+
+        let real_index = Vecteur2D::new(
+            index_x as u32 - (index_tm.x * self.width_one_tilemap),
+            index_y as u32 - (index_tm.y * self.height_one_tilemap),
+        );
+
+        let tilemap_opt = self.get_tilemap_from_position(position);
+
+        match tilemap_opt {
+            Some(tilemap) => {
+                tilemap.get_tile_at(&real_index)
+            }
+            _ => None
+        }
+    }
 }
 
 
@@ -126,7 +147,7 @@ impl TileMap {
                                 (current_line + cood_base.y) as f32
                             ),
                             r#type: if current_column == 0 || current_column == w - 1 || current_line == 0 || current_line == h - 1 {
-                                TileType::Mur
+                                TileType::Herbe
                             } else {
                                 TileType::Herbe
                             }
@@ -155,6 +176,14 @@ impl TileMap {
                 Some(tile)
             },
             _ => None
+        }
+    }
+
+    pub fn get_tile_at(&self, index: &Vecteur2D<u32>) -> Option<&Tile> {
+        if self.indexes_valid(index.x as i32, index.y as i32) {
+            Some(self.tiles.get(index.y as usize).unwrap().get(index.x as usize).unwrap())
+        } else {
+            None
         }
     }
 

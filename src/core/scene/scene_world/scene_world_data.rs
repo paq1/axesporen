@@ -24,7 +24,7 @@ impl SceneWorldData {
             is_init: false,
             player,
             camera: pos_player.clone(),
-            tilemap: TileMapHudge::new(30, 30, 32),
+            tilemap: TileMapHudge::new(2, 2, 32, 10, 10),
             pos_curseur: pos_player + Vecteur2D::new(32.0, 0.0),
             vaisseau_a_trouver: CollideBody::basic(
                 Self::random_vaisseau(),

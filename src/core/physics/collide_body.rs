@@ -1,5 +1,5 @@
 use crate::core::elements::tilemap::tile::{Tile, TileType};
-use crate::core::elements::tilemap::TileMap;
+use crate::core::elements::tilemap::{TileMap, TileMapHudge};
 use crate::core::sdd::vecteur2d::Vecteur2D;
 
 #[derive(Clone)]
@@ -12,6 +12,11 @@ pub struct CollideBody {
 pub trait CanCollideWithTileMap {
     fn collide_with(&self, tilemap: &TileMap) -> Vec<Option<Tile>>;
     fn is_collide(&self, tilemap: &TileMap, discriminants: Vec<TileType>) -> bool;
+}
+
+pub trait CanCollideWithTileMapHudge {
+    fn collide_with_tilemap_hudge(&self, tilemap: &TileMapHudge) -> Vec<Option<Tile>>;
+    fn is_collide_with_tilemap_hudge(&self, tilemap: &TileMapHudge, discriminants: Vec<TileType>) -> bool;
 }
 
 impl CollideBody {
@@ -55,7 +60,29 @@ impl CanCollideWithTileMap for CollideBody {
     }
 
     fn is_collide(&self, tilemap: &TileMap, discriminants: Vec<TileType>) -> bool {
-        let collide_number = self.collide_with(tilemap)
+        let collide_number = CanCollideWithTileMap::collide_with(self, tilemap)
+            .into_iter()
+            .filter(|t| {
+                t.is_none() || t.clone().map(|tile| discriminants.contains(&tile.r#type)).unwrap_or(false)
+            })
+            .count();
+
+        collide_number > 0
+    }
+}
+
+impl CanCollideWithTileMapHudge for CollideBody {
+    fn collide_with_tilemap_hudge(&self, tilemap: &TileMapHudge) -> Vec<Option<Tile>> {
+        self.radars.iter()
+            .map(|radar| self.position.clone() + radar.clone())
+            .map(|pos_radar| {
+                tilemap.get_tile_from_position(&pos_radar).map(|tile| tile.clone())
+            })
+            .collect::<Vec<_>>()
+    }
+
+    fn is_collide_with_tilemap_hudge(&self, tilemap: &TileMapHudge, discriminants: Vec<TileType>) -> bool {
+        let collide_number = CanCollideWithTileMapHudge::collide_with_tilemap_hudge(self, tilemap)
             .into_iter()
             .filter(|t| {
                 t.is_none() || t.clone().map(|tile| discriminants.contains(&tile.r#type)).unwrap_or(false)

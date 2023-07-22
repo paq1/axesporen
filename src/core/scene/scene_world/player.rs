@@ -10,8 +10,8 @@ pub struct Player {
 impl Player {
     pub fn new() -> Self {
         Self {
-            pos: Vecteur2D::new(300f32, 300f32),
-            collide_body: CollideBody::basic(Vecteur2D::new(300f32, 300f32), 16f32),
+            pos: Vecteur2D::new(64f32, 64f32),
+            collide_body: CollideBody::basic(Vecteur2D::new(64f32, 64f32), 16f32),
             vitesse: 600f32
         }
     }
