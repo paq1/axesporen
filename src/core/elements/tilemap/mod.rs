@@ -144,13 +144,24 @@ impl TileMap {
                 (0u32 .. w)
                     .into_iter()
                     .map(|current_column| {
+                        // Tile {
+                        //     pos: Vecteur2D::new(
+                        //         (current_column + cood_base.x) as f32,
+                        //         (current_line + cood_base.y) as f32
+                        //     ),
+                        //     r#type: if current_column == 0 || current_column == w - 1 || current_line == 0 || current_line == h - 1 {
+                        //         TileType::Herbe
+                        //     } else {
+                        //         TileType::Herbe
+                        //     }
+                        // }
                         Tile {
                             pos: Vecteur2D::new(
                                 (current_column + cood_base.x) as f32,
                                 (current_line + cood_base.y) as f32
                             ),
-                            r#type: if current_column == 0 || current_column == w - 1 || current_line == 0 || current_line == h - 1 {
-                                TileType::Herbe
+                            r#type: if current_column == 0 && current_line % 3 == 0 && current_column % 3 == 0 {
+                                TileType::Mur
                             } else {
                                 TileType::Herbe
                             }
