@@ -20,11 +20,15 @@ impl<'a> SpriteFactory<'a> {
         let tile_brique_path: &Path = Path::new("assets/sprites/tiles/tileStone.png");
         let tile_brique: Texture<'a> = tc.load_texture(tile_brique_path)?;
 
+        let poulet_path: &Path = Path::new("assets/sprites/animals/chicken.png");
+        let poulet: Texture<'a> = tc.load_texture(poulet_path)?;
+
         let viseur_path: &Path = Path::new("assets/sprites/curseur/curseur.png");
         let viseur: Texture<'a> = tc.load_texture(viseur_path)?;
 
         let sprites: HashMap<&str, Texture> = [
             ("smiley", spite_smiley),
+            ("poulet", poulet),
             ("tile_herbe", tile_herbe),
             ("tile_brique", tile_brique),
             ("viseur", viseur)
