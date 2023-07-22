@@ -11,10 +11,10 @@ use crate::core::input::CanManageInput;
 use crate::core::musics::CanPlayMusic;
 use crate::core::physics::collide_body::CanCollideWithTileMap;
 use crate::core::scene::{SceneEnum};
-use crate::core::scene::scene_exemple::scene_exemple_data::SceneExempleData;
+use crate::core::scene::scene_world::scene_exemple_data::SceneExempleData;
 use crate::core::sdd::vecteur2d::Vecteur2D;
 
-pub struct SceneExemple<SpriteService, TextService, InputService, MusicService>
+pub struct SceneWorld<SpriteService, TextService, InputService, MusicService>
     where
         SpriteService: CanDrawSprite,
         TextService: CanDrawText,
@@ -28,7 +28,7 @@ pub struct SceneExemple<SpriteService, TextService, InputService, MusicService>
     pub data: SceneExempleData
 }
 
-impl<SpriteService, TextService, InputService, MusicService> SceneExemple<SpriteService, TextService, InputService, MusicService>
+impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteService, TextService, InputService, MusicService>
     where
         SpriteService: CanDrawSprite,
         TextService: CanDrawText,
@@ -242,7 +242,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneExemple<Sprite
                 line
                     .iter_mut()
                     .filter(|current| {
-                        SceneExemple::<
+                        SceneWorld::<
                             SpriteService,
                             TextService,
                             InputService,

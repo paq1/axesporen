@@ -3,11 +3,11 @@ use std::rc::Rc;
 use crate::core::graphics::{CanDrawSprite, CanDrawText};
 use crate::core::input::CanManageInput;
 use crate::core::musics::CanPlayMusic;
-use crate::core::scene::scene_exemple::SceneExemple;
+use crate::core::scene::scene_world::SceneWorld;
 use crate::core::scene::scene_menu::SceneMenu;
 
 pub mod scene_menu;
-pub mod scene_exemple;
+pub mod scene_world;
 
 pub enum SceneEnum<SpriteService, TextService, InputService, MusicService>
     where
@@ -17,7 +17,7 @@ pub enum SceneEnum<SpriteService, TextService, InputService, MusicService>
         MusicService: CanPlayMusic
 {
     SceneMenu(SceneMenu<SpriteService, TextService, InputService, MusicService>),
-    SceneExemple(SceneExemple<SpriteService, TextService, InputService, MusicService>),
+    SceneWorld(SceneWorld<SpriteService, TextService, InputService, MusicService>),
 }
 
 pub struct SceneManager<SpriteService, TextService, InputService, MusicService>
@@ -55,7 +55,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneManager<Sprite
     pub fn update_scene(&mut self, dt: f32) {
         let nouvelle_scene = match &mut self.current {
             SceneEnum::SceneMenu(menu) => menu.on_scene(dt),
-            SceneEnum::SceneExemple(exemple) => exemple.on_scene(dt)
+            SceneEnum::SceneWorld(world) => world.on_scene(dt)
         };
 
         if let Some(x) = nouvelle_scene {

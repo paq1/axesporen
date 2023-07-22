@@ -1,5 +1,5 @@
 use crate::core::elements::tilemap::TileMap;
-use crate::core::scene::scene_exemple::player::Player;
+use crate::core::scene::scene_world::player::Player;
 use crate::core::sdd::vecteur2d::Vecteur2D;
 
 pub struct SceneExempleData {

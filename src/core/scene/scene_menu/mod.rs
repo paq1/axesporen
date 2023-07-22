@@ -6,7 +6,7 @@ use crate::core::graphics::models::color::Color;
 use crate::core::input::CanManageInput;
 use crate::core::musics::CanPlayMusic;
 use crate::core::scene::SceneEnum;
-use crate::core::scene::scene_exemple::SceneExemple;
+use crate::core::scene::scene_world::SceneWorld;
 use crate::core::scene::scene_menu::scene_menu_data::SceneMenuData;
 
 pub mod scene_menu_data;
@@ -76,13 +76,13 @@ impl<SpriteService, TextService, InputService, MusicService> SceneMenu<SpriteSer
     fn change_scene(&mut self) -> Option<SceneEnum<SpriteService, TextService, InputService, MusicService>> {
         if self.input_service.borrow().is_key_pressed("Space") {
             self.music_service.borrow().stop().expect("erreur lors de l'arret de la musique");
-            let scene_exemple = SceneExemple::new(
+            let scene_exemple = SceneWorld::new(
                 Rc::clone(&self.input_service),
                 Rc::clone(&self.text_service),
                 Rc::clone(&self.sprite_service),
                 Rc::clone(&self.music_service)
             );
-            Some(SceneEnum::SceneExemple(scene_exemple))
+            Some(SceneEnum::SceneWorld(scene_exemple))
         } else {
             None
         }

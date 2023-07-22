@@ -29,7 +29,7 @@ pub fn main() -> Result<(), String> {
     let _audio = sdl_context.audio()?;
     let ttf_context = sdl2::ttf::init().map_err(|e| e.to_string())?;
     let video_subsystem = sdl_context.video()?;
-    let window = video_subsystem.window("seed sdl2 -- paq1", 800, 600)
+    let window = video_subsystem.window("Axesporen", 800, 600)
         .position_centered()
         .build()
         .expect("could not initialize the video subsystem");
