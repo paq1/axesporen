@@ -32,6 +32,16 @@ impl CollideBody {
             ]
         }
     }
+
+    pub fn is_collide_with_object(&self, position: &Vecteur2D<f32>, size: f32) -> bool {
+        self.radars.iter()
+            .map(|radar| radar.clone() + self.position.clone())
+            .find(|radar| {
+                Vecteur2D::<f32>::from_points(radar, position)
+                    .norme() < size
+            })
+            .is_some()
+    }
 }
 
 impl CanCollideWithTileMap for CollideBody {

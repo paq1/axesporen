@@ -48,6 +48,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         self.test_play_sound();
 
         self.draw_tilemap().expect("erreur lors de l'affichage de la map");
+        self.draw_vaisseau_a_trouver().expect("erreur lors de l'affichage du vaisseau");
         self.draw_player().expect("erreur lors de l'affichage du player");
         self.draw_cursor().expect("erreur lors de l'affichage du curseur");
 
@@ -62,7 +63,8 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             "-------- debug --------".to_string(),
             format!("keys = {}", keys_pressed),
             format!("mouse = ({}, {})", (pos.x + self.data.camera.x) as i32, (pos.y + self.data.camera.y) as i32),
-            format!("mouse keys = {}", mouse_key_pressed)
+            format!("mouse keys = {}", mouse_key_pressed),
+            format!("monde numero = {}", self.data.compteur_de_monde_genere)
         ]
             .iter()
             .enumerate()
@@ -76,7 +78,21 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
                 ).expect("erreur lors de l'affichage");
             });
 
-        None
+        if self.data.vaisseau_a_trouver.is_collide_with_object(&self.data.player.pos, 16.0) {
+            Some(
+                SceneEnum::SceneWorld(
+                    SceneWorld::new(
+                        Rc::clone(&self.input_service),
+                        Rc::clone(&self.text_service),
+                        Rc::clone(&self.sprite_service),
+                        Rc::clone(&self.music_service),
+                        self.data.compteur_de_monde_genere + 1
+                    )
+                )
+            )
+        } else {
+            None
+        }
     }
 
     fn get_keys_pressed(&self) -> String {
@@ -100,13 +116,14 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         text_service: Rc<RefCell<TextService>>,
         sprite_service: Rc<RefCell<SpriteService>>,
         music_service: Rc<RefCell<MusicService>>,
+        compteur_de_monde_genere: u32
     ) -> Self {
         Self {
             input_service: key_manager,
             text_service,
             sprite_service,
             music_service,
-            data: SceneWorldData::new()
+            data: SceneWorldData::new(compteur_de_monde_genere)
         }
     }
 
@@ -217,6 +234,17 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             Vecteur2D::new(
                 (self.data.player.pos.x - self.data.camera.x - 16f32) as i32,
                 (self.data.player.pos.y - self.data.camera.y - 16f32) as i32
+            )
+            ,None, None
+        )
+    }
+
+    fn draw_vaisseau_a_trouver(&mut self) -> Result<(), String> {
+        self.sprite_service.borrow_mut().draw_sprite(
+            "smiley",
+            Vecteur2D::new(
+                (self.data.vaisseau_a_trouver.position.x - self.data.camera.x - 16f32) as i32,
+                (self.data.vaisseau_a_trouver.position.y - self.data.camera.y - 16f32) as i32
             )
             ,None, None
         )

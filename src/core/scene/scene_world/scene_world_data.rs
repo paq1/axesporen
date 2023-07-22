@@ -1,4 +1,5 @@
 use crate::core::elements::tilemap::TileMap;
+use crate::core::physics::collide_body::CollideBody;
 use crate::core::scene::scene_world::player::Player;
 use crate::core::sdd::vecteur2d::Vecteur2D;
 
@@ -7,11 +8,14 @@ pub struct SceneWorldData {
     pub player: Player,
     pub camera: Vecteur2D<f32>,
     pub tilemap: TileMap, // systeme de map basique (si trop grande joue sur les perfs)
-    pub pos_curseur: Vecteur2D<f32>
+    pub pos_curseur: Vecteur2D<f32>,
+
+    pub vaisseau_a_trouver: CollideBody, // vaisseau a trouver pour changer de monde
+    pub compteur_de_monde_genere: u32
 }
 
 impl SceneWorldData {
-    pub fn new() -> Self {
+    pub fn new(compteur_de_monde_genere: u32) -> Self {
         let player = Player::new();
         let pos_player = player.pos.clone();
 
@@ -21,6 +25,11 @@ impl SceneWorldData {
             camera: pos_player.clone(),
             tilemap: TileMap::new(30, 30, 32),
             pos_curseur: pos_player + Vecteur2D::new(32.0, 0.0),
+            vaisseau_a_trouver: CollideBody::basic(
+                Vecteur2D::new(32.0 * 2.0, 32.0 * 2.0),
+                16.0
+            ),
+            compteur_de_monde_genere
         }
     }
 }

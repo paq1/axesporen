@@ -80,7 +80,8 @@ impl<SpriteService, TextService, InputService, MusicService> SceneMenu<SpriteSer
                 Rc::clone(&self.input_service),
                 Rc::clone(&self.text_service),
                 Rc::clone(&self.sprite_service),
-                Rc::clone(&self.music_service)
+                Rc::clone(&self.music_service),
+                1
             );
             Some(SceneEnum::SceneWorld(scene_exemple))
         } else {
