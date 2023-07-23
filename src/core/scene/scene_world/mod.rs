@@ -1,5 +1,6 @@
 pub mod scene_world_data;
 pub mod player;
+pub mod enemy;
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -12,6 +13,7 @@ use crate::core::input::CanManageInput;
 use crate::core::musics::CanPlayMusic;
 use crate::core::physics::collide_body::{CanCollideWithTileMapHudge};
 use crate::core::scene::{SceneEnum};
+use crate::core::scene::scene_world::enemy::Enemy;
 use crate::core::scene::scene_world::scene_world_data::SceneWorldData;
 use crate::core::sdd::vecteur2d::Vecteur2D;
 
@@ -44,6 +46,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         self.init_scene().expect("erreur lors de l'initialisation de la scene");
 
         self.update_player(dt).expect("erreur lors de l'update du player");
+        self.update_enemies(dt);
         self.update_curseur();
         self.update_camera();
         self.test_play_sound();
@@ -51,6 +54,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         self.draw_near_tilemaps().expect("erreur lors de l'affichage de la map");
         self.draw_vaisseau_a_trouver().expect("erreur lors de l'affichage du vaisseau");
         self.draw_player().expect("erreur lors de l'affichage du player");
+        self.draw_enemies().expect("erreur lors de l'affichage du player");
         self.draw_cursor().expect("erreur lors de l'affichage du curseur");
 
         let keys_pressed = self.get_keys_pressed();
@@ -185,6 +189,10 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         Ok(())
     }
 
+    fn update_enemies(&mut self, dt: f32) {
+        self.data.enemies.iter_mut().for_each(|e: &mut Enemy| e.update(dt, &self.data.tilemap, &self.data.player));
+    }
+
     fn update_curseur(&mut self) {
         // on recup la pos du joueur et de la souris
         let pos_joueur = self.data.player.pos.clone();
@@ -237,6 +245,29 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
                 (self.data.player.pos.y - self.data.camera.y - 16f32) as i32
             )
             ,Some(Vecteur2D::new(128, 128)), Some(Vecteur2D::new(32, 32))
+        )
+    }
+
+    fn draw_enemies(&mut self) -> Result<(), String> {
+        self.data.enemies
+            .clone()
+            .iter()
+            .map(|e| e.clone())
+            .for_each(|e| {
+                self.draw_enemy(&e).expect("erreur affichage")
+            });
+
+        Ok(())
+    }
+
+    fn draw_enemy(&mut self, enemy: &Enemy) -> Result<(), String> {
+        self.sprite_service.borrow_mut().draw_sprite(
+            "smiley",
+            Vecteur2D::new(
+                (enemy.collide_body.position.x - self.data.camera.x - 16f32) as i32,
+                (enemy.collide_body.position.y - self.data.camera.y - 16f32) as i32
+            )
+            ,Some(Vecteur2D::new(32, 32)), Some(Vecteur2D::new(32, 32))
         )
     }
 
