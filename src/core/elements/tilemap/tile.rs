@@ -3,7 +3,11 @@ use crate::core::sdd::vecteur2d::Vecteur2D;
 #[derive(PartialEq, Clone)]
 pub enum TileType {
     Herbe,
-    Mur
+    Mur,
+    Sand,
+    Snow,
+    Goo,
+    Wood
 }
 
 #[derive(Clone)]

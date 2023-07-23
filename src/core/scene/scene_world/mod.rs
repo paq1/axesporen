@@ -326,10 +326,13 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
                     })
                     .for_each(|current| {
 
-                        let sprite_index = if current.r#type == TileType::Herbe {
-                            "tile_herbe"
-                        } else {
-                            "tile_brique"
+                        let sprite_index = match current.r#type {
+                            TileType::Mur => "tile_brique",
+                            TileType::Sand => "tile_sand",
+                            TileType::Snow => "tile_snow",
+                            TileType::Goo => "tile_goo",
+                            TileType::Wood => "tile_wood",
+                            _ => "tile_herbe"
                         };
 
                         self.sprite_service.borrow_mut().draw_sprite(

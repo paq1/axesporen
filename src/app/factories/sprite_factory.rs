@@ -20,6 +20,18 @@ impl<'a> SpriteFactory<'a> {
         let tile_brique_path: &Path = Path::new("assets/sprites/tiles/tileStone.png");
         let tile_brique: Texture<'a> = tc.load_texture(tile_brique_path)?;
 
+        let tile_sand_path: &Path = Path::new("assets/sprites/tiles/tileSand.png");
+        let tile_sand: Texture<'a> = tc.load_texture(tile_sand_path)?;
+
+        let tile_snow_path: &Path = Path::new("assets/sprites/tiles/tileSnow.png");
+        let tile_snow: Texture<'a> = tc.load_texture(tile_snow_path)?;
+
+        let tile_goo_path: &Path = Path::new("assets/sprites/tiles/tileGoo.png");
+        let tile_goo: Texture<'a> = tc.load_texture(tile_goo_path)?;
+
+        let tile_wood_path: &Path = Path::new("assets/sprites/tiles/tileWood.png");
+        let tile_wood: Texture<'a> = tc.load_texture(tile_wood_path)?;
+
         let poulet_path: &Path = Path::new("assets/sprites/animals/chicken.png");
         let poulet: Texture<'a> = tc.load_texture(poulet_path)?;
 
@@ -47,6 +59,10 @@ impl<'a> SpriteFactory<'a> {
             ("porte", door),
             ("tile_herbe", tile_herbe),
             ("tile_brique", tile_brique),
+            ("tile_sand", tile_sand),
+            ("tile_snow", tile_snow),
+            ("tile_goo", tile_goo),
+            ("tile_wood", tile_wood),
             ("viseur", viseur),
             ("planete_0", planet_0),
             ("planete_1", planet_1),

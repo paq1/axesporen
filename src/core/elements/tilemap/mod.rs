@@ -1,3 +1,4 @@
+use rand::Rng;
 use crate::core::elements::tilemap::tile::{Tile, TileType};
 use crate::core::sdd::vecteur2d::Vecteur2D;
 
@@ -138,23 +139,30 @@ impl TileMap {
 
         let cood_base = from_coord.unwrap_or(Vecteur2D::new(0, 0));
 
+        let mut rand = rand::thread_rng();
+
+        let is_other_than_grass = rand.gen_range(0..3) == 0;
+
+        let type_de_biome = if !is_other_than_grass {
+            TileType::Herbe
+        } else {
+            let prob = rand.gen_range(0..10);
+
+            if prob % 2 == 0 {
+                TileType::Sand
+            } else if prob % 3 == 0 {
+                TileType::Snow
+            } else {
+                TileType::Goo
+            }
+        };
+
         let tiles = (0u32 .. h)
             .into_iter()
             .map(|current_line| {
                 (0u32 .. w)
                     .into_iter()
                     .map(|current_column| {
-                        // Tile {
-                        //     pos: Vecteur2D::new(
-                        //         (current_column + cood_base.x) as f32,
-                        //         (current_line + cood_base.y) as f32
-                        //     ),
-                        //     r#type: if current_column == 0 || current_column == w - 1 || current_line == 0 || current_line == h - 1 {
-                        //         TileType::Herbe
-                        //     } else {
-                        //         TileType::Herbe
-                        //     }
-                        // }
                         Tile {
                             pos: Vecteur2D::new(
                                 (current_column + cood_base.x) as f32,
@@ -163,7 +171,7 @@ impl TileMap {
                             r#type: if current_column == 0 && current_line % 3 == 0 && current_column % 3 == 0 {
                                 TileType::Mur
                             } else {
-                                TileType::Herbe
+                                type_de_biome.clone()
                             }
                         }
                     })
