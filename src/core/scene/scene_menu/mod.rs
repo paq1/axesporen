@@ -8,6 +8,7 @@ use crate::core::musics::CanPlayMusic;
 use crate::core::scene::SceneEnum;
 use crate::core::scene::scene_world::SceneWorld;
 use crate::core::scene::scene_menu::scene_menu_data::SceneMenuData;
+use crate::core::sdd::vecteur2d::Vecteur2D;
 
 pub mod scene_menu_data;
 
@@ -40,6 +41,8 @@ impl<SpriteService, TextService, InputService, MusicService> SceneMenu<SpriteSer
         self.init_scene().expect("erreur lors de l'initialisation du menu");
 
         let next_scene = self.change_scene();
+
+        self.draw_planetes().expect("erreur lors de l'affichage des planetes");
 
         self.draw_text_title();
         self.draw_text_for_change_scene();
@@ -88,13 +91,43 @@ impl<SpriteService, TextService, InputService, MusicService> SceneMenu<SpriteSer
             None
         }
     }
+    fn draw_planetes(&mut self) -> Result<(), String> {
+        self.sprite_service.borrow_mut().draw_sprite(
+            "planete_0",
+            Vecteur2D::new(300, 300),
+            Some(Vecteur2D::new(1280, 1280)),
+            Some(Vecteur2D::new(600, 600))
+        )?;
+
+        self.sprite_service.borrow_mut().draw_sprite(
+            "planete_2",
+            Vecteur2D::new(200, 100),
+            Some(Vecteur2D::new(1280, 1280)),
+            Some(Vecteur2D::new(100, 100))
+        )?;
+
+        self.sprite_service.borrow_mut().draw_sprite(
+            "planete_3",
+            Vecteur2D::new(500, 100),
+            Some(Vecteur2D::new(1280, 1280)),
+            Some(Vecteur2D::new(20, 20))
+        )?;
+
+        self.sprite_service.borrow_mut().draw_sprite(
+            "planete_1",
+            Vecteur2D::new(100, 100),
+            Some(Vecteur2D::new(1280, 1280)),
+            Some(Vecteur2D::new(200, 200))
+        )
+    }
+
 
     fn draw_text_title(&mut self) {
         self.text_service.borrow_mut()
             .create_text(
-                "Seed SDL-2 for jam",
+                "Axesporen",
                 32 * 1,
-                0 + 32 * 3,
+                0 + 32 * 2,
                 40u32,
                 Color::rgb(100u8, 0u8, 200u8)
             ).expect("erreur lors de l'affichage");

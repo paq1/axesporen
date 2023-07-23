@@ -26,6 +26,18 @@ impl<'a> SpriteFactory<'a> {
         let door_path: &Path = Path::new("assets/sprites/doors/porte.png");
         let door: Texture<'a> = tc.load_texture(door_path)?;
 
+        let planet_0_path: &Path = Path::new("assets/sprites/planetes/planet00.png");
+        let planet_0: Texture<'a> = tc.load_texture(planet_0_path)?;
+
+        let planet_1_path: &Path = Path::new("assets/sprites/planetes/planet01.png");
+        let planet_1: Texture<'a> = tc.load_texture(planet_1_path)?;
+
+        let planet_2_path: &Path = Path::new("assets/sprites/planetes/planet02.png");
+        let planet_2: Texture<'a> = tc.load_texture(planet_2_path)?;
+
+        let planet_3_path: &Path = Path::new("assets/sprites/planetes/planet03.png");
+        let planet_3: Texture<'a> = tc.load_texture(planet_3_path)?;
+
         let viseur_path: &Path = Path::new("assets/sprites/curseur/curseur.png");
         let viseur: Texture<'a> = tc.load_texture(viseur_path)?;
 
@@ -35,7 +47,11 @@ impl<'a> SpriteFactory<'a> {
             ("porte", door),
             ("tile_herbe", tile_herbe),
             ("tile_brique", tile_brique),
-            ("viseur", viseur)
+            ("viseur", viseur),
+            ("planete_0", planet_0),
+            ("planete_1", planet_1),
+            ("planete_2", planet_2),
+            ("planete_3", planet_3),
         ]
             .into_iter()
             .collect::<HashMap<&str, Texture>>();
