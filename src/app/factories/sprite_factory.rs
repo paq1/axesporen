@@ -35,6 +35,9 @@ impl<'a> SpriteFactory<'a> {
         let poulet_path: &Path = Path::new("assets/sprites/animals/chicken.png");
         let poulet: Texture<'a> = tc.load_texture(poulet_path)?;
 
+        let croco_path: &Path = Path::new("assets/sprites/animals/crocodile.png");
+        let croco: Texture<'a> = tc.load_texture(croco_path)?;
+
         let door_path: &Path = Path::new("assets/sprites/doors/porte.png");
         let door: Texture<'a> = tc.load_texture(door_path)?;
 
@@ -56,6 +59,7 @@ impl<'a> SpriteFactory<'a> {
         let sprites: HashMap<&str, Texture> = [
             ("smiley", spite_smiley),
             ("poulet", poulet),
+            ("croco", croco),
             ("porte", door),
             ("tile_herbe", tile_herbe),
             ("tile_brique", tile_brique),

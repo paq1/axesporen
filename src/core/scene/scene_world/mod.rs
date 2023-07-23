@@ -285,12 +285,12 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
 
     fn draw_enemy(&mut self, enemy: &Enemy) -> Result<(), String> {
         self.sprite_service.borrow_mut().draw_sprite(
-            "smiley",
+            "croco",
             Vecteur2D::new(
                 (enemy.collide_body.position.x - self.data.camera.x - 16f32) as i32,
                 (enemy.collide_body.position.y - self.data.camera.y - 16f32) as i32
             )
-            ,Some(Vecteur2D::new(32, 32)), Some(Vecteur2D::new(32, 32))
+            ,Some(Vecteur2D::new(128, 128)), Some(Vecteur2D::new(32, 32))
         )
     }
 
