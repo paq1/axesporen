@@ -13,6 +13,7 @@ use crate::core::input::CanManageInput;
 use crate::core::musics::CanPlayMusic;
 use crate::core::physics::collide_body::{CanCollideWithTileMapHudge};
 use crate::core::scene::{SceneEnum};
+use crate::core::scene::scene_game_over::SceneGameOver;
 use crate::core::scene::scene_world::enemy::Enemy;
 use crate::core::scene::scene_world::scene_world_data::SceneWorldData;
 use crate::core::sdd::vecteur2d::Vecteur2D;
@@ -95,9 +96,22 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
                     )
                 )
             )
+        } else if self.player_collide_with_enemy() {
+            Some(
+                SceneEnum::SceneGameOver(
+                    SceneGameOver::new(
+                        Rc::clone(&self.input_service),
+                        Rc::clone(&self.text_service),
+                        Rc::clone(&self.sprite_service),
+                        Rc::clone(&self.music_service),
+                        self.data.compteur_de_monde_genere
+                    )
+                )
+            )
         } else {
             None
         }
+
     }
 
     fn get_keys_pressed(&self) -> String {
@@ -225,6 +239,15 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             }
             _ => ()
         }
+    }
+
+    fn player_collide_with_enemy(&self) -> bool {
+        self.data.enemies.iter()
+            .find(|e| {
+                Vecteur2D::<f32>::from_points(&e.collide_body.position, &self.data.player.pos)
+                    .norme() < 32.0
+            })
+            .is_some()
     }
 
     fn update_camera(&mut self) {

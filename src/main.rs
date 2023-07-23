@@ -4,7 +4,6 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
 use sdl2::mouse::MouseButton;
 
 use crate::app::factories::font_factory::FontFactory;
@@ -101,8 +100,7 @@ pub fn main() -> Result<(), String> {
         canvas.borrow_mut().clear();
         for event in event_pump.poll_iter() {
             match event {
-                Event::Quit { .. } |
-                Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
+                Event::Quit { .. } => {
                     break 'running;
                 }
                 Event::KeyDown { keycode, .. } => {
