@@ -5,8 +5,7 @@ use sdl2::render::{Texture, TextureCreator};
 use sdl2::video::WindowContext;
 
 pub struct SpriteFactory<'t> {
-    pub sprites: HashMap<&'t str, Texture<'t>>,
-    // pub spite_smiley: Texture<'t>
+    pub sprites: HashMap<&'t str, Texture<'t>>
 }
 
 impl<'a> SpriteFactory<'a> {
