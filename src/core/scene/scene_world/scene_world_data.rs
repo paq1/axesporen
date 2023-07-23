@@ -23,17 +23,25 @@ impl SceneWorldData {
         let player = Player::new();
         let pos_player = player.pos.clone();
 
-        let enemies = vec![
-            Enemy::new(Vecteur2D::new(30.0 * 32.0, 30.0 * 32.0)),
-            Enemy::new(Vecteur2D::new(10.0 * 32.0, 30.0 * 32.0)),
-            Enemy::new(Vecteur2D::new(20.0 * 32.0, 20.0 * 32.0)),
-        ];
+        let nb_biome_w: u32 = 2;
+        let nb_biome_h: u32 = 2;
+        let tile_size: u32 = 32;
+
+        let width_per_biome: u32 = 20;
+        let height_per_biome: u32 = 20;
+
+        let enemies = Self::generate_random_enemies(
+            Vecteur2D::<i32>::new(20, 20),
+            Vecteur2D::<i32>::new((nb_biome_w * width_per_biome - 1u32) as i32 , (nb_biome_h * height_per_biome - 1u32) as i32),
+            tile_size,
+            10 * compteur_de_monde_genere
+        );
 
         Self {
             is_init: false,
             player,
             camera: pos_player.clone(),
-            tilemap: TileMapHudge::new(3, 2, 32, 20, 20),
+            tilemap: TileMapHudge::new(nb_biome_w, nb_biome_h, tile_size, width_per_biome, height_per_biome),
             pos_curseur: pos_player + Vecteur2D::new(32.0, 0.0),
             vaisseau_a_trouver: CollideBody::basic(
                 Self::random_vaisseau(),
@@ -42,6 +50,23 @@ impl SceneWorldData {
             compteur_de_monde_genere,
             enemies
         }
+    }
+
+    fn generate_random_enemies(coord_min: Vecteur2D<i32>, coord_max: Vecteur2D<i32>, tile_size: u32, number: u32) -> Vec<Enemy> {
+        (0..number)
+            .map(|index| Self::generate_random_enemy(&coord_min, &coord_max, tile_size))
+            .collect::<Vec<_>>()
+    }
+
+    fn generate_random_enemy(coord_min: &Vecteur2D<i32>, coord_max: &Vecteur2D<i32>, tile_size: u32) -> Enemy {
+        let mut rnd = rand::thread_rng();
+
+        let pos = Vecteur2D::<f32>::new(
+            rnd.gen_range(coord_min.x..coord_max.x) as f32 * tile_size as f32,
+            rnd.gen_range(coord_min.y..coord_max.y) as f32 * tile_size as f32,
+        );
+
+        Enemy::new(pos)
     }
 
     fn random_vaisseau() -> Vecteur2D<f32> {
