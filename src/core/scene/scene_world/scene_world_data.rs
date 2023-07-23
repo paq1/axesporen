@@ -58,7 +58,7 @@ impl SceneWorldData {
 
     fn generate_random_enemies(coord_min: Vecteur2D<i32>, coord_max: Vecteur2D<i32>, tile_size: u32, number: u32) -> Vec<Enemy> {
         (0..number)
-            .map(|index| Self::generate_random_enemy(&coord_min, &coord_max, tile_size))
+            .map(|_| Self::generate_random_enemy(&coord_min, &coord_max, tile_size))
             .collect::<Vec<_>>()
     }
 
@@ -74,9 +74,6 @@ impl SceneWorldData {
     }
 
     fn random_vaisseau(coord_min: &Vecteur2D<i32>, coord_max: &Vecteur2D<i32>, tile_size: u32) -> Vecteur2D<f32> {
-        let min = 1;
-        let max = 30;
-
         let mut rng = rand::thread_rng();
 
         let coord = match rng.gen_range(0..3) {

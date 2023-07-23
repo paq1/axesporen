@@ -58,29 +58,33 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         self.draw_enemies().expect("erreur lors de l'affichage du player");
         self.draw_cursor().expect("erreur lors de l'affichage du curseur");
 
-        let keys_pressed = self.get_keys_pressed();
-        let mouse_key_pressed = self.get_mouse_keys_pressed();
+        let _keys_pressed = self.get_keys_pressed();
+        let _mouse_key_pressed = self.get_mouse_keys_pressed();
 
         let font_size = 14u32;
-        let pos = self.input_service.borrow_mut().get_mouse_position();
+        let _pos = self.input_service.borrow_mut().get_mouse_position();
+
+        self.sprite_service.borrow_mut().draw_sprite(
+            "panel",
+            Vecteur2D::new(0, 0),
+            Some(Vecteur2D::new(100, 100)),
+            Some(Vecteur2D::new(400, 100))
+        ).expect("erreur affichage panel");
 
 
         vec![
-            "-------- debug --------".to_string(),
-            format!("keys = {}", keys_pressed),
-            format!("mouse = ({}, {})", (pos.x + self.data.camera.x) as i32, (pos.y + self.data.camera.y) as i32),
-            format!("mouse keys = {}", mouse_key_pressed),
-            format!("monde numero = {}", self.data.compteur_de_monde_genere)
+            format!("count enemies = {}", self.data.enemies.len()),
+            format!("lvl {}", self.data.compteur_de_monde_genere)
         ]
             .iter()
             .enumerate()
             .for_each(|(index, debug_str)| {
                 self.text_service.borrow_mut().create_text(
                     debug_str.as_str(),
-                    10i32,
-                    font_size as i32 * index as i32,
+                    32i32,
+                    font_size as i32 * index as i32 + 32,
                     font_size,
-                    Color::rgb(255u8, 255u8, 255u8)
+                    Color::rgb(255u8, 0u8, 255u8)
                 ).expect("erreur lors de l'affichage");
             });
 
