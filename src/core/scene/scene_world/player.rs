@@ -9,9 +9,10 @@ pub struct Player {
 
 impl Player {
     pub fn new() -> Self {
+        let position_de_depart = Vecteur2D::new(64f32, 64f32);
         Self {
-            pos: Vecteur2D::new(64f32, 64f32),
-            collide_body: CollideBody::basic(Vecteur2D::new(64f32, 64f32), 16f32),
+            pos: position_de_depart.clone(),
+            collide_body: CollideBody::basic(position_de_depart, 16f32),
             vitesse: 600f32
         }
     }

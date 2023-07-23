@@ -31,7 +31,7 @@ impl SceneWorldData {
         let height_per_biome: u32 = 20;
 
         let enemies = Self::generate_random_enemies(
-            Vecteur2D::<i32>::new(20, 20),
+            Vecteur2D::<i32>::new(10, 10),
             Vecteur2D::<i32>::new((nb_biome_w * width_per_biome - 1u32) as i32 , (nb_biome_h * height_per_biome - 1u32) as i32),
             tile_size,
             10 * compteur_de_monde_genere
@@ -44,7 +44,11 @@ impl SceneWorldData {
             tilemap: TileMapHudge::new(nb_biome_w, nb_biome_h, tile_size, width_per_biome, height_per_biome),
             pos_curseur: pos_player + Vecteur2D::new(32.0, 0.0),
             vaisseau_a_trouver: CollideBody::basic(
-                Self::random_vaisseau(),
+                Self::random_vaisseau(
+                    &Vecteur2D::<i32>::new(10, 10),
+                    &Vecteur2D::<i32>::new((nb_biome_w * width_per_biome - 1u32) as i32 , (nb_biome_h * height_per_biome - 1u32) as i32),
+                    tile_size,
+                ),
                 16.0
             ),
             compteur_de_monde_genere,
@@ -69,15 +73,26 @@ impl SceneWorldData {
         Enemy::new(pos)
     }
 
-    fn random_vaisseau() -> Vecteur2D<f32> {
+    fn random_vaisseau(coord_min: &Vecteur2D<i32>, coord_max: &Vecteur2D<i32>, tile_size: u32) -> Vecteur2D<f32> {
         let min = 1;
         let max = 30;
 
         let mut rng = rand::thread_rng();
 
-        let x = rng.gen_range(min..max);
-        let y = rng.gen_range(min..max);
+        let coord = match rng.gen_range(0..3) {
+            0 => coord_max.clone(),
+            1 => Vecteur2D::new(coord_min.x, coord_max.y),
+            _ => Vecteur2D::new(coord_max.x, coord_min.y)
+        };
 
-        Vecteur2D::new((x * 32) as f32 , (y * 32) as f32)
+        Vecteur2D::new(
+            (coord.x * tile_size as i32) as f32,
+            (coord.y * tile_size as i32) as f32,
+        )
+
+        // let x = rng.gen_range(min..max);
+        // let y = rng.gen_range(min..max);
+        //
+        // Vecteur2D::new((x * 32) as f32 , (y * 32) as f32)
     }
 }
