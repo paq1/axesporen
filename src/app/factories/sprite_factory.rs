@@ -56,6 +56,9 @@ impl<'a> SpriteFactory<'a> {
         let viseur_path: &Path = Path::new("assets/sprites/curseur/curseur.png");
         let viseur: Texture<'a> = tc.load_texture(viseur_path)?;
 
+        let panel_path: &Path = Path::new("assets/sprites/panel/glassPanel.png");
+        let panel: Texture<'a> = tc.load_texture(panel_path)?;
+
         let sprites: HashMap<&str, Texture> = [
             ("smiley", spite_smiley),
             ("poulet", poulet),
@@ -72,6 +75,7 @@ impl<'a> SpriteFactory<'a> {
             ("planete_1", planet_1),
             ("planete_2", planet_2),
             ("planete_3", planet_3),
+            ("panel", panel),
         ]
             .into_iter()
             .collect::<HashMap<&str, Texture>>();

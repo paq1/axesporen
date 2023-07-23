@@ -41,11 +41,17 @@ impl<SpriteService, TextService, InputService, MusicService> SceneMenu<SpriteSer
         self.init_scene().expect("erreur lors de l'initialisation du menu");
 
         let next_scene = self.change_scene();
+        self.update_panel();
+
 
         self.draw_planetes().expect("erreur lors de l'affichage des planetes");
 
-        self.draw_text_title();
-        self.draw_text_for_change_scene();
+        if self.data.panel_draw {
+            self.draw_panel().expect("erreur lors de l'affichage du panel");
+        } else {
+            self.draw_text_title();
+            self.draw_text_for_change_scene();
+        }
 
         next_scene
     }
@@ -63,6 +69,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneMenu<SpriteSer
             music_service,
             data: SceneMenuData {
                 is_init: false,
+                panel_draw: true
             }
         }
     }
@@ -77,7 +84,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneMenu<SpriteSer
     }
 
     fn change_scene(&mut self) -> Option<SceneEnum<SpriteService, TextService, InputService, MusicService>> {
-        if self.input_service.borrow().is_key_pressed("Space") {
+        if self.input_service.borrow().is_key_pressed("Space") && !self.data.panel_draw {
             self.music_service.borrow().stop().expect("erreur lors de l'arret de la musique");
             let scene_exemple = SceneWorld::new(
                 Rc::clone(&self.input_service),
@@ -91,6 +98,76 @@ impl<SpriteService, TextService, InputService, MusicService> SceneMenu<SpriteSer
             None
         }
     }
+
+    fn update_panel(&mut self) {
+        if self.input_service.borrow().is_key_pressed("Escape") {
+            self.data.panel_draw = false;
+        }
+    }
+
+    fn draw_panel(&mut self) -> Result<(), String> {
+        self.sprite_service.borrow_mut().draw_sprite(
+            "panel",
+            Vecteur2D::new(32, 32),
+            Some(Vecteur2D::new(100, 100)),
+            Some(Vecteur2D::new(800 - 32 * 2, 600 - 32 * 2))
+        )?;
+
+        self.text_service
+            .borrow()
+            .create_text(
+                "Work in progress",
+                32 * 5, 64,
+                30,
+                Color::rgb(200, 150, 0)
+            )?;
+
+        self.text_service
+            .borrow()
+            .create_text(
+                "in coming :",
+                32 * 3, 32 * 4,
+                25,
+                Color::rgb(200, 150, 0)
+            )?;
+
+        self.text_service
+            .borrow()
+            .create_text(
+                "-> enemie generator",
+                32 * 3, 32 * 5,
+                25,
+                Color::rgb(200, 150, 100)
+            )?;
+
+        self.text_service
+            .borrow()
+            .create_text(
+                "-> weapons",
+                32 * 3, 32 * 6,
+                25,
+                Color::rgb(200, 150, 100)
+            )?;
+
+        self.text_service
+            .borrow()
+            .create_text(
+                "-> random buildings",
+                32 * 3, 32 * 7,
+                25,
+                Color::rgb(200, 150, 100)
+            )?;
+
+        self.text_service
+            .borrow()
+            .create_text(
+                "[Press Escape]",
+                32 * 6, 32 * 15,
+                30,
+                Color::rgb(255, 0, 0)
+            )
+    }
+
     fn draw_planetes(&mut self) -> Result<(), String> {
         self.sprite_service.borrow_mut().draw_sprite(
             "planete_0",
