@@ -13,7 +13,7 @@ impl Player {
         Self {
             pos: position_de_depart.clone(),
             collide_body: CollideBody::basic(position_de_depart, 16f32),
-            vitesse: 600f32
+            vitesse: 450f32
         }
     }
 }

@@ -23,8 +23,8 @@ impl SceneWorldData {
         let player = Player::new();
         let pos_player = player.pos.clone();
 
-        let nb_biome_w: u32 = 2;
-        let nb_biome_h: u32 = 2;
+        let nb_biome_w: u32 = 10;
+        let nb_biome_h: u32 = 10;
         let tile_size: u32 = 32;
 
         let width_per_biome: u32 = 20;
