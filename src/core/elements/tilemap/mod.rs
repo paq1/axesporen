@@ -183,22 +183,31 @@ impl TileMap {
     }
 
     pub fn get_tile_from_position(&self, position: &Vecteur2D<f32>) -> Option<Tile> {
-        let index_x = (position.x / self.tile_size as f32).floor() as i32;
-        let index_y = (position.y / self.tile_size as f32).floor() as i32;
-
-        match (index_x, index_y) {
-            (x, y) if self.indexes_valid(x, y) => {
-                // fixme clean le code
+        self
+            .get_indexes_from_position_strict(position)
+            .map(|indexes| {
                 let line = self.tiles
-                    .get(y as usize)
+                    .get(indexes.y as usize)
                     .unwrap();
 
-                let tile = line.get(x as usize).unwrap().clone();
+                line.get(indexes.x as usize).unwrap().clone()
+            })
+    }
 
-                Some(tile)
-            },
-            _ => None
+    pub fn get_indexes_from_position_strict(&self, position: &Vecteur2D<f32>) -> Option<Vecteur2D<i32>> {
+        let indexes = self.get_indexes_from_position(position);
+
+        if self.indexes_valid(indexes.x, indexes.y) {
+            Some(indexes)
+        } else {
+            None
         }
+    }
+
+    pub fn get_indexes_from_position(&self, position: &Vecteur2D<f32>) -> Vecteur2D<i32> {
+        let index_x = (position.x / self.tile_size as f32).floor() as i32;
+        let index_y = (position.y / self.tile_size as f32).floor() as i32;
+        Vecteur2D::new(index_x, index_y)
     }
 
     pub fn get_tile_at(&self, index: &Vecteur2D<u32>) -> Option<&Tile> {

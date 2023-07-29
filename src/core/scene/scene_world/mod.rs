@@ -11,7 +11,7 @@ use crate::core::graphics::models::color::Color;
 use crate::core::graphics::{CanDrawSprite, CanDrawText};
 use crate::core::input::CanManageInput;
 use crate::core::musics::CanPlayMusic;
-use crate::core::physics::collide_body::{CanCollideWithTileMapHudge};
+use crate::core::physics::collide_body::{CanCollideWithTileMap, CanCollideWithTileMapHudge};
 use crate::core::scene::{SceneEnum};
 use crate::core::scene::scene_game_over::SceneGameOver;
 use crate::core::scene::scene_world::enemy::Enemy;
@@ -52,7 +52,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         self.update_camera();
         self.test_play_sound();
 
-        self.draw_near_tilemaps().expect("erreur lors de l'affichage de la map");
+        self.draw_one_tilemap_upgraded(&self.data.tilemap).expect("erreur lors de l'affichage de la map");
         self.draw_vaisseau_a_trouver().expect("erreur lors de l'affichage du vaisseau");
         self.draw_player().expect("erreur lors de l'affichage du player");
         self.draw_enemies().expect("erreur lors de l'affichage du player");
@@ -168,7 +168,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             let mut col_body = self.data.player.collide_body.clone();
             col_body.position.y -= vitesse_temps;
 
-            if !col_body.is_collide_with_tilemap_hudge(&self.data.tilemap, vec![TileType::Mur]) {
+            if !col_body.is_collide(&self.data.tilemap, vec![TileType::Mur]) {
                 self.data.player.pos.y -= vitesse_temps;
                 self.data.player.collide_body.position.y -= vitesse_temps;
             }
@@ -178,7 +178,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             let mut col_body = self.data.player.collide_body.clone();
             col_body.position.x += vitesse_temps;
 
-            if !col_body.is_collide_with_tilemap_hudge(&self.data.tilemap, vec![TileType::Mur]) {
+            if !col_body.is_collide(&self.data.tilemap, vec![TileType::Mur]) {
                 self.data.player.pos.x += vitesse_temps;
                 self.data.player.collide_body.position.x += vitesse_temps;
             }
@@ -188,7 +188,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             let mut col_body = self.data.player.collide_body.clone();
             col_body.position.y += vitesse_temps;
 
-            if !col_body.is_collide_with_tilemap_hudge(&self.data.tilemap, vec![TileType::Mur]) {
+            if !col_body.is_collide(&self.data.tilemap, vec![TileType::Mur]) {
                 self.data.player.pos.y += vitesse_temps;
                 self.data.player.collide_body.position.y += vitesse_temps;
             }
@@ -198,7 +198,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             let mut col_body = self.data.player.collide_body.clone();
             col_body.position.x -= vitesse_temps;
 
-            if !col_body.is_collide_with_tilemap_hudge(&self.data.tilemap, vec![TileType::Mur]) {
+            if !col_body.is_collide(&self.data.tilemap, vec![TileType::Mur]) {
                 self.data.player.pos.x -= vitesse_temps;
                 self.data.player.collide_body.position.x -= vitesse_temps;
             }
@@ -321,48 +321,48 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
     }
 
 
-    fn draw_near_tilemaps(&self) -> Result<(), String> {
-
-        let pos_tilemap = self.data.tilemap.get_tilemap_index_from_position(&self.data.player.pos);
-
-        let max_x = self.data.tilemap.nb_tilemap_column as i32 - 1;
-        let max_y = self.data.tilemap.nb_tilemap_line as i32 - 1;
-
-        let x = pos_tilemap.x as i32;
-        let y = pos_tilemap.y as i32;
-
-        let pos = [
-            Vecteur2D::new(x - 1, y - 1), // haut - gauche
-            Vecteur2D::new(x, y - 1), // haut
-            Vecteur2D::new(x + 1, y - 1), // haut - droit
-
-            Vecteur2D::new(x - 1, y), // gauche
-            Vecteur2D::new(x, y), // centre
-            Vecteur2D::new(x + 1, y), // droit
-
-            Vecteur2D::new(x - 1, y + 1), // bas - gauche
-            Vecteur2D::new(x, y + 1), // bas
-            Vecteur2D::new(x + 1, y + 1), // bas - droit
-        ];
-
-        pos
-            .iter()
-            .filter(|pos| {
-                pos.x >= 0 && pos.y >= 0 && pos.x <= max_x && pos.y <= max_y
-            })
-            .map(|index| {
-                self.data.tilemap
-                    .get_tilemap_from_index(
-                        &Vecteur2D::new(index.x as u32, index.y as u32)
-                    )
-            })
-            .for_each(|tilemap| {
-                self.draw_one_tilemap(tilemap)
-                    .expect("erreur lors de l'affichage de la tilemap");
-            });
-
-        Ok(())
-    }
+    // fn draw_near_tilemaps(&self) -> Result<(), String> {
+    //
+    //     let pos_tilemap = self.data.tilemap.get_tilemap_index_from_position(&self.data.player.pos);
+    //
+    //     let max_x = self.data.tilemap.nb_tilemap_column as i32 - 1;
+    //     let max_y = self.data.tilemap.nb_tilemap_line as i32 - 1;
+    //
+    //     let x = pos_tilemap.x as i32;
+    //     let y = pos_tilemap.y as i32;
+    //
+    //     let pos = [
+    //         Vecteur2D::new(x - 1, y - 1), // haut - gauche
+    //         Vecteur2D::new(x, y - 1), // haut
+    //         Vecteur2D::new(x + 1, y - 1), // haut - droit
+    //
+    //         Vecteur2D::new(x - 1, y), // gauche
+    //         Vecteur2D::new(x, y), // centre
+    //         Vecteur2D::new(x + 1, y), // droit
+    //
+    //         Vecteur2D::new(x - 1, y + 1), // bas - gauche
+    //         Vecteur2D::new(x, y + 1), // bas
+    //         Vecteur2D::new(x + 1, y + 1), // bas - droit
+    //     ];
+    //
+    //     pos
+    //         .iter()
+    //         .filter(|pos| {
+    //             pos.x >= 0 && pos.y >= 0 && pos.x <= max_x && pos.y <= max_y
+    //         })
+    //         .map(|index| {
+    //             self.data.tilemap
+    //                 .get_tilemap_from_index(
+    //                     &Vecteur2D::new(index.x as u32, index.y as u32)
+    //                 )
+    //         })
+    //         .for_each(|tilemap| {
+    //             self.draw_one_tilemap(tilemap)
+    //                 .expect("erreur lors de l'affichage de la tilemap");
+    //         });
+    //
+    //     Ok(())
+    // }
 
     fn draw_one_tilemap(&self, tilemap: &TileMap) -> Result<(), String> {
         tilemap
@@ -394,6 +394,76 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
                         };
 
                         self.sprite_service.borrow_mut().draw_sprite(
+                            sprite_index,
+                            Vecteur2D::new(
+                                current.pos.x as i32 * 32 - self.data.camera.x as i32,
+                                current.pos.y as i32 * 32 - self.data.camera.y as i32
+                            )
+                            , Some(Vecteur2D::new(64, 74)), Some(Vecteur2D::new(32, 51))
+                        ).expect("erreur de lors de la 'affiche de la tuile");
+                    });
+            });
+
+        Ok(())
+    }
+
+    fn draw_one_tilemap_upgraded(&self, tilemap: &TileMap) -> Result<(), String> {
+        let width = 26;
+        let height = 20;
+        let index_camera = tilemap.get_indexes_from_position(&self.data.camera);
+        let coord_min = Vecteur2D::new(
+            {
+                if index_camera.x < 0 {
+                    0
+                } else {
+                    index_camera.x
+                }
+            },
+            {
+                if index_camera.y < 0 {
+                    0
+                } else {
+                    index_camera.y
+                }
+            }
+        );
+        let coord_max = Vecteur2D::new(
+            {
+                if index_camera.x + width > tilemap.tiles[0].len() as i32 {
+                    tilemap.tiles[0].len() as i32
+                } else {
+                    index_camera.x + width
+                }
+            },
+            {
+                if index_camera.y + height > tilemap.tiles.len() as i32 {
+                    tilemap.tiles.len() as i32
+                } else {
+                    index_camera.y + height
+                }
+            }
+        );
+
+        let mut sp_service = self.sprite_service.borrow_mut();
+
+        (coord_min.y .. coord_max.y)
+            .for_each(|ligne| {
+                (coord_min.x .. coord_max.x)
+                    .for_each(|colonne| {
+
+                        // let c = tilemap.tiles.get(ligne as usize).unwrap().get(colonne as usize).unwrap();
+
+                        let current = tilemap.tiles.get(ligne as usize).unwrap().get(colonne as usize).unwrap();
+                        let sprite_index = match current.r#type {
+                            TileType::Mur => "tile_brique",
+                            TileType::Sand => "tile_sand",
+                            TileType::Snow => "tile_snow",
+                            TileType::Goo => "tile_goo",
+                            TileType::Wood => "tile_wood",
+                            _ => "tile_herbe"
+                        };
+
+                        sp_service.draw_sprite(
                             sprite_index,
                             Vecteur2D::new(
                                 current.pos.x as i32 * 32 - self.data.camera.x as i32,

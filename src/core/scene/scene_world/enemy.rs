@@ -1,4 +1,4 @@
-use crate::core::elements::tilemap::TileMapHudge;
+use crate::core::elements::tilemap::{TileMap, TileMapHudge};
 use crate::core::physics::collide_body::CollideBody;
 use crate::core::scene::scene_world::player::Player;
 use crate::core::sdd::vecteur2d::Vecteur2D;
@@ -22,7 +22,7 @@ impl Enemy {
     }
 
 
-    pub fn update(&mut self, dt: f32, _tilemap: &TileMapHudge, joueur: &Player) {
+    pub fn update(&mut self, dt: f32, _tilemap: &TileMap, joueur: &Player) {
 
         let vec_enemie_joueur = Vecteur2D::<f32>::from_points(
             &self.collide_body.position,

@@ -1,5 +1,5 @@
 use rand::Rng;
-use crate::core::elements::tilemap::TileMapHudge;
+use crate::core::elements::tilemap::{TileMap, TileMapHudge};
 use crate::core::physics::collide_body::CollideBody;
 use crate::core::scene::scene_world::enemy::Enemy;
 use crate::core::scene::scene_world::player::Player;
@@ -9,7 +9,7 @@ pub struct SceneWorldData {
     pub is_init: bool,
     pub player: Player,
     pub camera: Vecteur2D<f32>,
-    pub tilemap: TileMapHudge, // systeme de map basique (si trop grande joue sur les perfs)
+    pub tilemap: TileMap,// TileMapHudge, // systeme de map basique (si trop grande joue sur les perfs)
     pub pos_curseur: Vecteur2D<f32>,
 
     pub vaisseau_a_trouver: CollideBody, // vaisseau a trouver pour changer de monde
@@ -41,7 +41,12 @@ impl SceneWorldData {
             is_init: false,
             player,
             camera: pos_player.clone(),
-            tilemap: TileMapHudge::new(nb_biome_w, nb_biome_h, tile_size, width_per_biome, height_per_biome),
+            tilemap: TileMap::new(
+                nb_biome_w * width_per_biome,
+                nb_biome_h * height_per_biome,
+                32u32,
+                None
+            ),// TileMapHudge::new(nb_biome_w, nb_biome_h, tile_size, width_per_biome, height_per_biome),
             pos_curseur: pos_player + Vecteur2D::new(32.0, 0.0),
             vaisseau_a_trouver: CollideBody::basic(
                 Self::random_vaisseau(
