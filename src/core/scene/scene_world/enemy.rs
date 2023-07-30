@@ -1,4 +1,4 @@
-use crate::core::elements::tilemap::{TileMap, TileMapHudge};
+use crate::core::elements::tilemap::TileMap;
 use crate::core::physics::collide_body::CollideBody;
 use crate::core::scene::scene_world::player::Player;
 use crate::core::sdd::vecteur2d::Vecteur2D;

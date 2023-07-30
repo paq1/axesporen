@@ -1,22 +1,22 @@
-pub mod scene_world_data;
-pub mod player;
-pub mod enemy;
-
 use std::cell::RefCell;
 use std::rc::Rc;
+
 use crate::core::elements::tilemap::tile::TileType;
 use crate::core::elements::tilemap::TileMap;
-use crate::core::graphics::models::color::Color;
-
 use crate::core::graphics::{CanDrawSprite, CanDrawText};
+use crate::core::graphics::models::color::Color;
 use crate::core::input::CanManageInput;
 use crate::core::musics::CanPlayMusic;
-use crate::core::physics::collide_body::{CanCollideWithTileMap, CanCollideWithTileMapHudge};
-use crate::core::scene::{SceneEnum};
+use crate::core::physics::collide_body::CanCollideWithTileMap;
+use crate::core::scene::SceneEnum;
 use crate::core::scene::scene_game_over::SceneGameOver;
 use crate::core::scene::scene_world::enemy::Enemy;
 use crate::core::scene::scene_world::scene_world_data::SceneWorldData;
 use crate::core::sdd::vecteur2d::Vecteur2D;
+
+pub mod scene_world_data;
+pub mod player;
+pub mod enemy;
 
 pub struct SceneWorld<SpriteService, TextService, InputService, MusicService>
     where
@@ -320,93 +320,6 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         )
     }
 
-
-    // fn draw_near_tilemaps(&self) -> Result<(), String> {
-    //
-    //     let pos_tilemap = self.data.tilemap.get_tilemap_index_from_position(&self.data.player.pos);
-    //
-    //     let max_x = self.data.tilemap.nb_tilemap_column as i32 - 1;
-    //     let max_y = self.data.tilemap.nb_tilemap_line as i32 - 1;
-    //
-    //     let x = pos_tilemap.x as i32;
-    //     let y = pos_tilemap.y as i32;
-    //
-    //     let pos = [
-    //         Vecteur2D::new(x - 1, y - 1), // haut - gauche
-    //         Vecteur2D::new(x, y - 1), // haut
-    //         Vecteur2D::new(x + 1, y - 1), // haut - droit
-    //
-    //         Vecteur2D::new(x - 1, y), // gauche
-    //         Vecteur2D::new(x, y), // centre
-    //         Vecteur2D::new(x + 1, y), // droit
-    //
-    //         Vecteur2D::new(x - 1, y + 1), // bas - gauche
-    //         Vecteur2D::new(x, y + 1), // bas
-    //         Vecteur2D::new(x + 1, y + 1), // bas - droit
-    //     ];
-    //
-    //     pos
-    //         .iter()
-    //         .filter(|pos| {
-    //             pos.x >= 0 && pos.y >= 0 && pos.x <= max_x && pos.y <= max_y
-    //         })
-    //         .map(|index| {
-    //             self.data.tilemap
-    //                 .get_tilemap_from_index(
-    //                     &Vecteur2D::new(index.x as u32, index.y as u32)
-    //                 )
-    //         })
-    //         .for_each(|tilemap| {
-    //             self.draw_one_tilemap(tilemap)
-    //                 .expect("erreur lors de l'affichage de la tilemap");
-    //         });
-    //
-    //     Ok(())
-    // }
-
-    fn draw_one_tilemap(&self, tilemap: &TileMap) -> Result<(), String> {
-        tilemap
-            .tiles
-            .iter()
-            .for_each(|line| {
-                line
-                    .iter()
-                    .filter(|current| {
-                        SceneWorld::<
-                            SpriteService,
-                            TextService,
-                            InputService,
-                            MusicService
-                        >::is_in_screen(
-                            current.pos.x as i32 * 32 - self.data.camera.x as i32,
-                            current.pos.y as i32 * 32 - self.data.camera.y as i32
-                        )
-                    })
-                    .for_each(|current| {
-
-                        let sprite_index = match current.r#type {
-                            TileType::Mur => "tile_brique",
-                            TileType::Sand => "tile_sand",
-                            TileType::Snow => "tile_snow",
-                            TileType::Goo => "tile_goo",
-                            TileType::Wood => "tile_wood",
-                            _ => "tile_herbe"
-                        };
-
-                        self.sprite_service.borrow_mut().draw_sprite(
-                            sprite_index,
-                            Vecteur2D::new(
-                                current.pos.x as i32 * 32 - self.data.camera.x as i32,
-                                current.pos.y as i32 * 32 - self.data.camera.y as i32
-                            )
-                            , Some(Vecteur2D::new(64, 74)), Some(Vecteur2D::new(32, 51))
-                        ).expect("erreur de lors de la 'affiche de la tuile");
-                    });
-            });
-
-        Ok(())
-    }
-
     fn draw_one_tilemap_upgraded(&self, tilemap: &TileMap) -> Result<(), String> {
         let width = 26;
         let height = 20;
@@ -477,13 +390,13 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         Ok(())
     }
 
-    fn is_in_screen(point_x: i32, point_y: i32) -> bool {
-        let window_width = 800;
-        let window_height = 600;
-        let margin = 100;
-        // fixme utilise un service window (pas encore dev) afin de recupere ces info
-        point_x > 0 - margin && point_x < window_width && point_y > 0 - margin && point_y < window_height
-    }
+    // fn is_in_screen(point_x: i32, point_y: i32) -> bool {
+    //     let window_width = 800;
+    //     let window_height = 600;
+    //     let margin = 100;
+    //     // fixme utilise un service window (pas encore dev) afin de recupere ces info
+    //     point_x > 0 - margin && point_x < window_width && point_y > 0 - margin && point_y < window_height
+    // }
 
     fn test_play_sound(&self) {
         if self.input_service.borrow().is_key_pressed("X") {
