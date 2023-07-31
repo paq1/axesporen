@@ -359,33 +359,28 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
 
         let mut sp_service = self.sprite_service.borrow_mut();
 
-        (coord_min.y .. coord_max.y)
-            .for_each(|ligne| {
-                (coord_min.x .. coord_max.x)
-                    .for_each(|colonne| {
+        for ligne in coord_min.y .. coord_max.y {
+            for colonne in coord_min.x .. coord_max.x {
+                let current = tilemap.tiles.get(ligne as usize).unwrap().get(colonne as usize).unwrap();
+                let sprite_index = match current.r#type {
+                    TileType::Mur => "tile_brique",
+                    TileType::Sand => "tile_sand",
+                    TileType::Snow => "tile_snow",
+                    TileType::Goo => "tile_goo",
+                    TileType::Wood => "tile_wood",
+                    _ => "tile_herbe"
+                };
 
-                        // let c = tilemap.tiles.get(ligne as usize).unwrap().get(colonne as usize).unwrap();
-
-                        let current = tilemap.tiles.get(ligne as usize).unwrap().get(colonne as usize).unwrap();
-                        let sprite_index = match current.r#type {
-                            TileType::Mur => "tile_brique",
-                            TileType::Sand => "tile_sand",
-                            TileType::Snow => "tile_snow",
-                            TileType::Goo => "tile_goo",
-                            TileType::Wood => "tile_wood",
-                            _ => "tile_herbe"
-                        };
-
-                        sp_service.draw_sprite(
-                            sprite_index,
-                            Vecteur2D::new(
-                                current.pos.x as i32 * 32 - self.data.camera.x as i32,
-                                current.pos.y as i32 * 32 - self.data.camera.y as i32
-                            )
-                            , Some(Vecteur2D::new(64, 74)), Some(Vecteur2D::new(32, 51))
-                        ).expect("erreur de lors de la 'affiche de la tuile");
-                    });
-            });
+                sp_service.draw_sprite(
+                    sprite_index,
+                    Vecteur2D::new(
+                        current.pos.x as i32 * 32 - self.data.camera.x as i32,
+                        current.pos.y as i32 * 32 - self.data.camera.y as i32
+                    )
+                    , Some(Vecteur2D::new(64, 74)), Some(Vecteur2D::new(32, 51))
+                ).expect("erreur de lors de la 'affiche de la tuile");
+            }
+        }
 
         Ok(())
     }
