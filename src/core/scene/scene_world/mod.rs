@@ -2,7 +2,6 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::core::elements::tilemap::tile::TileType;
-use crate::core::elements::tilemap::TileMap;
 use crate::core::graphics::{CanBeDrawWithSprite, CanDrawSprite, CanDrawText};
 use crate::core::graphics::models::color::Color;
 use crate::core::input::CanManageInput;
