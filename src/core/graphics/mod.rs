@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 use crate::core::graphics::models::color::Color;
 use crate::core::sdd::vecteur2d::Vecteur2D;
 
@@ -22,4 +24,12 @@ pub trait CanDrawSprite {
         from_size: Option<Vecteur2D<u32>>,
         to_size: Option<Vecteur2D<u32>>
     ) -> Result<(), String>;
+}
+
+pub trait CanBeDrawWithSprite {
+    fn draw<SpriteService>(
+        &self,
+        camera: &Vecteur2D<f32>,
+        sprite_service: &Rc<RefCell<SpriteService>>
+    ) -> Result<(), String> where SpriteService: CanDrawSprite;
 }

@@ -1,5 +1,8 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 use rand::Rng;
 use crate::core::elements::tilemap::tile::{Tile, TileType};
+use crate::core::graphics::{CanBeDrawWithSprite, CanDrawSprite};
 use crate::core::sdd::vecteur2d::Vecteur2D;
 
 pub mod tile;
@@ -220,5 +223,78 @@ impl TileMap {
 
     pub fn indexes_valid(&self, x: i32, y: i32) -> bool {
         x >= 0 && y >= 0 && x < self.tiles.get(0).unwrap().len() as i32 && y < self.tiles.len() as i32
+    }
+}
+
+impl CanBeDrawWithSprite for TileMap {
+    fn draw<SpriteService>(
+        &self, camera: &Vecteur2D<f32>,
+        sprite_service: &Rc<RefCell<SpriteService>>
+    ) -> Result<(), String>
+    where
+        SpriteService: CanDrawSprite
+    {
+        let width = 26;
+        let height = 20;
+        let index_camera = self.get_indexes_from_position(camera);
+        let coord_min = Vecteur2D::new(
+            {
+                if index_camera.x < 0 {
+                    0
+                } else {
+                    index_camera.x
+                }
+            },
+            {
+                if index_camera.y < 0 {
+                    0
+                } else {
+                    index_camera.y
+                }
+            }
+        );
+        let coord_max = Vecteur2D::new(
+            {
+                if index_camera.x + width > self.tiles[0].len() as i32 {
+                    self.tiles[0].len() as i32
+                } else {
+                    index_camera.x + width
+                }
+            },
+            {
+                if index_camera.y + height > self.tiles.len() as i32 {
+                    self.tiles.len() as i32
+                } else {
+                    index_camera.y + height
+                }
+            }
+        );
+
+        let mut sp_service = sprite_service.borrow_mut();
+
+        for ligne in coord_min.y .. coord_max.y {
+            for colonne in coord_min.x .. coord_max.x {
+                let current = self.tiles.get(ligne as usize).unwrap().get(colonne as usize).unwrap();
+                let sprite_index = match current.r#type {
+                    TileType::Mur => "tile_brique",
+                    TileType::Sand => "tile_sand",
+                    TileType::Snow => "tile_snow",
+                    TileType::Goo => "tile_goo",
+                    TileType::Wood => "tile_wood",
+                    _ => "tile_herbe"
+                };
+
+                sp_service.draw_sprite(
+                    sprite_index,
+                    Vecteur2D::new(
+                        current.pos.x as i32 * 32 - camera.x as i32,
+                        current.pos.y as i32 * 32 - camera.y as i32
+                    )
+                    , Some(Vecteur2D::new(64, 74)), Some(Vecteur2D::new(32, 51))
+                ).expect("erreur de lors de la 'affiche de la tuile");
+            }
+        }
+
+        Ok(())
     }
 }

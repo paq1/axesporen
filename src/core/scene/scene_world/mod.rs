@@ -3,7 +3,7 @@ use std::rc::Rc;
 
 use crate::core::elements::tilemap::tile::TileType;
 use crate::core::elements::tilemap::TileMap;
-use crate::core::graphics::{CanDrawSprite, CanDrawText};
+use crate::core::graphics::{CanBeDrawWithSprite, CanDrawSprite, CanDrawText};
 use crate::core::graphics::models::color::Color;
 use crate::core::input::CanManageInput;
 use crate::core::musics::CanPlayMusic;
@@ -52,7 +52,7 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
         self.update_camera();
         self.test_play_sound();
 
-        self.draw_one_tilemap_upgraded(&self.data.tilemap).expect("erreur lors de l'affichage de la map");
+        self.data.tilemap.draw(&self.data.camera, &Rc::clone(&self.sprite_service)).expect("erreur lors de l'affichage de la tilemap");
         self.draw_vaisseau_a_trouver().expect("erreur lors de l'affichage du vaisseau");
         self.draw_player().expect("erreur lors de l'affichage du player");
         self.draw_enemies().expect("erreur lors de l'affichage du player");
@@ -318,71 +318,6 @@ impl<SpriteService, TextService, InputService, MusicService> SceneWorld<SpriteSe
             )
             , Some(Vecteur2D::new(512, 512)), None
         )
-    }
-
-    fn draw_one_tilemap_upgraded(&self, tilemap: &TileMap) -> Result<(), String> {
-        let width = 26;
-        let height = 20;
-        let index_camera = tilemap.get_indexes_from_position(&self.data.camera);
-        let coord_min = Vecteur2D::new(
-            {
-                if index_camera.x < 0 {
-                    0
-                } else {
-                    index_camera.x
-                }
-            },
-            {
-                if index_camera.y < 0 {
-                    0
-                } else {
-                    index_camera.y
-                }
-            }
-        );
-        let coord_max = Vecteur2D::new(
-            {
-                if index_camera.x + width > tilemap.tiles[0].len() as i32 {
-                    tilemap.tiles[0].len() as i32
-                } else {
-                    index_camera.x + width
-                }
-            },
-            {
-                if index_camera.y + height > tilemap.tiles.len() as i32 {
-                    tilemap.tiles.len() as i32
-                } else {
-                    index_camera.y + height
-                }
-            }
-        );
-
-        let mut sp_service = self.sprite_service.borrow_mut();
-
-        for ligne in coord_min.y .. coord_max.y {
-            for colonne in coord_min.x .. coord_max.x {
-                let current = tilemap.tiles.get(ligne as usize).unwrap().get(colonne as usize).unwrap();
-                let sprite_index = match current.r#type {
-                    TileType::Mur => "tile_brique",
-                    TileType::Sand => "tile_sand",
-                    TileType::Snow => "tile_snow",
-                    TileType::Goo => "tile_goo",
-                    TileType::Wood => "tile_wood",
-                    _ => "tile_herbe"
-                };
-
-                sp_service.draw_sprite(
-                    sprite_index,
-                    Vecteur2D::new(
-                        current.pos.x as i32 * 32 - self.data.camera.x as i32,
-                        current.pos.y as i32 * 32 - self.data.camera.y as i32
-                    )
-                    , Some(Vecteur2D::new(64, 74)), Some(Vecteur2D::new(32, 51))
-                ).expect("erreur de lors de la 'affiche de la tuile");
-            }
-        }
-
-        Ok(())
     }
 
     // fn is_in_screen(point_x: i32, point_y: i32) -> bool {
